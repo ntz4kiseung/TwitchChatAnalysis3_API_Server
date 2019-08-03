@@ -7,12 +7,96 @@ const header = {
 };
 const divideSec = 120;
 
+// keyword받았을때 찾는거
+// db에있다는걸 전제, getCommentsCounting와 거의 같음
+const getCommentsSearchCounting = async (videoId, keyword) => {
+    var video = await db.Video.findOne({videoId : `v${videoId}`});
+    var commentsCounting = [];
+    var seconds = 0;
+    var counting = 0;
+    video.comments.map(comment => {
+        if(comment.content_offset_seconds > seconds+5){
+            commentsCounting.push({
+                seconds: seconds,
+                counting: counting
+            });
+            seconds += 5;
+            counting = 0;
+        }else{
+            if(comment.body.indexOf(keyword)>=0){
+                counting ++;
+            };
+        }
+    });
+
+    const returnVideo = {
+        userId     : video.userId,
+        name       : video.name,
+        videoId    : video.videoId,
+        title      : video.title,
+        created_at : video.created_at,
+        game       : video.game,
+        length     : video.length,
+        comments   : commentsCounting
+    }
+    return returnVideo;
+}
+
+// db에서 꺼내와서 5초 간격으로 카운팅해서 뱉어주는 함수
+// db에 있다는걸 전제하고 쓰는 함수
+const getCommentsCounting = async (videoId) => {
+    var video = await db.Video.findOne({videoId : `v${videoId}`});
+    var commentsCounting = [];
+    var seconds = 0;
+    var counting = 0;
+    video.comments.map(comment => {
+        if(comment.content_offset_seconds > seconds+5){
+            commentsCounting.push({
+                seconds: seconds,
+                counting: counting
+            });
+            seconds += 5;
+            counting = 0;
+        }else{
+            counting ++;
+        }
+    });
+
+    const returnVideo = {
+        userId     : video.userId,
+        name       : video.name,
+        videoId    : video.videoId,
+        title      : video.title,
+        created_at : video.created_at,
+        game       : video.game,
+        length     : video.length,
+        comments   : commentsCounting
+    }
+    return returnVideo;
+}
+
+// getAllComments의 결과를 받아옴. video랑 comments 들어있는 data
+const saveVideo = async (data) => {
+    const video = await db.Video.create({
+        userId: `${data.video.channel._id}`,
+        name: data.video.channel.name,
+        videoId: data.video._id,
+        title: data.video.title,
+        created_at: data.video.created_at,
+        game: data.video.game,
+        length: data.video.length,
+        comments: data.comments
+    });
+    video.save();
+}
+
+
 // 최종 결과로 
 // {
 //     content_offset_seconds: '~~',
 //     body: '~~'
 // }
-// 이것만 잔뜩 담긴 배열[]을 리턴함 videoId는 이거 부른데에도 있으니까 괜찮겠지?
+// 이것만 잔뜩 담긴 배열[]과 video정보를 리턴함 videoId는 이거 부른데에도 있으니까 괜찮겠지?
 const getAllComments = async (videoId) => {
     const video = await getVideo(videoId);
     const length = video.length;
@@ -25,10 +109,10 @@ const getAllComments = async (videoId) => {
 
     var bundleArray = await Promise.all(bundlePromiseArray).then(result => result);
     bundleArray.sort((a,b)=>(a.startSec - b.startSec));
-    var result = [];
-    bundleArray.map(bundle => (bundle.comments.map(comment => result.push(comment))));
-    console.log('작업끝!', result.length);
-    return result;
+    var comments = [];
+    bundleArray.map(bundle => (bundle.comments.map(comment => comments.push(comment))));
+    console.log('작업끝!', comments.length);
+    return {video, comments};
 }
 
 // startSec ~ ( startSec + divideSec ) 까지의 코멘트 번들을 리턴해줌
@@ -68,10 +152,9 @@ const getCommentsBundle = async (videoId, startSec) => {
         });
         
     } while ( !( (cursorOrSecond==undefined) || (cursorOrSecond==null) ) );
-    console.log('한 뭉치 done!');
+    console.log('한 번들 done!');
     return bundle;
 };
-
 
 // Twitch에 직접 다녀오는 함수1
 const getVideo = async (videoId) => {
@@ -109,7 +192,9 @@ const getCommentBody = (comment) => {
     return comment.message.body;
 }
 
+// const test = async()=>{
+//     saveVideo(await getAllComments('459923976'));
+// }
+// test();
 
-
-
- getAllComments('458976246');
+module.exports = {getVideo, saveVideo, getCommentsCounting, getCommentsSearchCounting, getAllComments};

@@ -12,31 +12,31 @@ const streamers = [
         videoThumbnails: [
             {
                 userId: '66375105',
-                videoId: '461310592',
+                videoId: 'v461310592',
                 thumbnail: 'https://vod-secure.twitch.tv/_404/404_processing_320x180.png',
                 title: '침투부 안보이는 아침라디오 (후원음성X)'
             },
             {
                 userId: '66375105',
-                videoId: '460993970',
+                videoId: 'v460993970',
                 thumbnail: 'https://static-cdn.jtvnw.net/s3_vods/21a511b6c19b9a790c28_zilioner_35124000656_1263921704/thumb/thumb0-320x180.jpg',
                 title: '침착맨&옥냥이 지렁이싸움 (후원음성X)'
             },
             {
                 userId: '66375105',
-                videoId: '460820836',
+                videoId: 'v460820836',
                 thumbnail: 'https://static-cdn.jtvnw.net/s3_vods/f374af6f8f389ec8e572_zilioner_35119166432_1263619473/thumb/thumb0-320x180.jpg',
                 title: '아침라디오 왕십리로 날아온 편지 (후원음성X)'
             },
             {
                 userId: '66375105',
-                videoId: '460052020',
+                videoId: 'v460052020',
                 thumbnail: 'https://static-cdn.jtvnw.net/s3_vods/5f9b322d9ae9f0e864e7_zilioner_35098301424_1262315117/thumb/thumb0-320x180.jpg',
                 title: '침&펄 디아블로3 하드코어 대작전 Act.2 (후원음성X)'
             },
             {
                 userId: '66375105',
-                videoId: '459923976',
+                videoId: 'v459923976',
                 thumbnail: 'https://static-cdn.jtvnw.net/s3_vods/6f99c1a912216f53c922_zilioner_35094793072_1262095808/thumb/thumb0-320x180.jpg',
                 title: '침&펄 작은거인 임세모 신곡 쇼케이스 "생각에 대한 생각" (후원음성X)'
             }

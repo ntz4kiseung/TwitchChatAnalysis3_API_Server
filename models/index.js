@@ -8,4 +8,7 @@ mongoose.Promise = global.Promise;
 
 mongoose.connect('mongodb://localhost/TCA3', {useNewUrlParser: true});
 
-module.exports.Streamer = require('./streamer');
+const Streamer = require('./streamer');
+const Video = require('./video');
+
+module.exports = {Streamer, Video};

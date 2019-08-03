@@ -1,4 +1,6 @@
 const fetch = require('node-fetch');
+const db = require('../models');
+const mongoose = require('mongoose');
 
 const header = {
     'Client-ID': '3ruypxbpewihfy9b6t3zsa1m96bjel',
@@ -35,11 +37,42 @@ const findStreamer = async (userName) => {
     }
 };
 
-module.exports = {findStreamer, nameToId};
+// findStreamer의 결과인 twitch에서 fetch해온 Streamer객체를 받음
+const saveStreamer = async (streamer) => {
+    const saveStreamer = await db.Streamer.create({
+        userId: streamer._id,
+        displayName: streamer.display_name,
+        name: streamer.name,
+        desc: streamer.description,
+        logo: streamer.logo,
+        followers: streamer.followers,
+        totalViews: streamer.views,
+        videoThumbnails: []
+    });
+    // await saveStreamer.save();
+    // 몽구스의 save()는 필드값 비교해서 바뀐거 있으면 저장해주는거임. 덮어쓰기 비슷한거. 그래서 여기선 할 필요 없음.
+    return saveStreamer;
+}
 
-// const test = async () => {
-//     var temp = await findStreamer('woowakgood');
-//     console.log(temp);
-// };
 
-// test();
+// db에서 가져온 streamer와
+// twitch에서 fetch해온 video를 받는다. (이 스트리머에 이 video 썸네일 추가)
+const pushThumbnail = async (streamer, video) => {
+    const videoThumbnail = {
+        userId: `${video.channel._id}`,
+        videoId: `${video._id}`,
+        thumbnail: video.thumbnails.medium[0].url,
+        title: video.title        
+    };
+    streamer.videoThumbnails.push(videoThumbnail);
+    streamer.save();
+}
+
+const videoThumbnailSchema = new mongoose.Schema({
+    userId: String,
+    videoId: String,
+    thumbnail: String,
+    title: String
+});
+
+module.exports = {findStreamer, nameToId, saveStreamer, pushThumbnail};
