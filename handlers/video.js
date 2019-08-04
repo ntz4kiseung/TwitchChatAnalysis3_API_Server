@@ -10,7 +10,8 @@ exports.testVideo = async (req, res, next) => {
 exports.getVideo = async (req,res,next) => {
     const videoId = req.params.videoId;
     const video = await twitch.getVideo(videoId);
-
+    res.set('Access-Control-Allow-Origin','*');
+    
     if(video==null || video.status==400 || video.status==404){
         res.status(200).json({
             type: 'NotFoundVideo',
@@ -38,6 +39,7 @@ exports.getVideo = async (req,res,next) => {
 // 바로 찾아서 보여줌 -> 이미 video가 있다는게 전제됨.
 exports.searchKeyword = async (req, res, next) => {
     const returnVideo = await twitch.getCommentsSearchCounting(req.params.videoId, req.params.keyword);
+    res.set('Access-Control-Allow-Origin','*');
 
     res.status(200).json({
         type: 'SearchKeyword',
@@ -52,6 +54,8 @@ exports.saveVideo = async (req,res,next) => {
     const videoId = req.params.videoId;
     const video = await twitch.getVideo(videoId);
     let streamer = await db.Streamer.findOne({userId: `${video.channel._id}`});
+    res.set('Access-Control-Allow-Origin','*');
+    
     if(streamer==null){
         // 없으면 스트리머부터 저장하고
         console.log('스트리머저장 in saveVideo');
