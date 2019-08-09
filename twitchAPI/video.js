@@ -10,17 +10,18 @@ const divideSec = 120;
 // keyword받았을때 찾는거
 // db에있다는걸 전제, getCommentsCounting와 거의 같음
 const getCommentsSearchCounting = async (videoId, keyword) => {
+    const secondGap = 300;
     var video = await db.Video.findOne({videoId : `v${videoId}`});
     var commentsCounting = [];
     var seconds = 0;
     var counting = 0;
     video.comments.map(comment => {
-        if(comment.content_offset_seconds > seconds+5){
+        if(comment.content_offset_seconds > seconds+secondGap){
             commentsCounting.push({
                 seconds: seconds,
                 counting: counting
             });
-            seconds += 5;
+            seconds += secondGap;
             counting = 0;
         }else{
             if(comment.body.indexOf(keyword)>=0){
@@ -45,17 +46,18 @@ const getCommentsSearchCounting = async (videoId, keyword) => {
 // db에서 꺼내와서 5초 간격으로 카운팅해서 뱉어주는 함수
 // db에 있다는걸 전제하고 쓰는 함수
 const getCommentsCounting = async (videoId) => {
+    const secondGap = 300;
     var video = await db.Video.findOne({videoId : `v${videoId}`});
     var commentsCounting = [];
     var seconds = 0;
     var counting = 0;
     video.comments.map(comment => {
-        if(comment.content_offset_seconds > seconds+5){
+        if(comment.content_offset_seconds > seconds+secondGap){
             commentsCounting.push({
                 seconds: seconds,
                 counting: counting
             });
-            seconds += 5;
+            seconds += secondGap;
             counting = 0;
         }else{
             counting ++;
